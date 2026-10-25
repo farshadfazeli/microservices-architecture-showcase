@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\farshad\\Desktop\\microservices-architecture-showcase\\src\\Services\\UserService\\UserService.API\\UserService.API.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\farshad\\Desktop\\microservices-architecture-showcase\\src\\Services\\UserService\\UserService.API\\UserService.API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\farshad\\Desktop\\microservices-architecture-showcase\\src\\Services\\UserService\\UserService.API\\UserService.API.csproj",
+        "projectName": "UserService.API",
+        "projectPath": "C:\\Users\\farshad\\Desktop\\microservices-architecture-showcase\\src\\Services\\UserService\\UserService.API\\UserService.API.csproj",
+        "packagesPath": "C:\\Users\\farshad\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\farshad\\Desktop\\microservices-architecture-showcase\\src\\Services\\UserService\\UserService.API\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\farshad\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://devops.bmsd.ir/tfs/Systan/_packaging/Systan/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
