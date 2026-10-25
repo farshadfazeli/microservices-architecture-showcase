@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="pageTitle">معماری میکروسرویس - فرشاد فاضلی</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=Inter:wght@400;500;700;800&display=swap');
+
+        :root {
+            --navy: #102a43;
+            --blue: #1976d2;
+            --orange: #f2994a;
+            --green: #219653;
+            --red: #d64545;
+            --text: #172b4d;
+            --muted: #607d9b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Vazirmatn", Tahoma, sans-serif;
+            color: var(--text);
+            background: radial-gradient(circle at 10% 10%, #dff1ff 0, transparent 28%), radial-gradient(circle at 90% 90%, #ffe4bd 0, transparent 30%), #f4f7fb;
+            overflow: hidden;
+            transition: font-family .2s;
+        }
+
+        /* تغییر فونت و راستا در حالت انگلیسی */
+        html[lang="en"] body {
+            font-family: "Inter", Arial, sans-serif;
+        }
+
+        html[lang="en"] ul {
+            padding-right: 0;
+            padding-left: 26px;
+        }
+
+        html[lang="en"] .highlight {
+            border-right: 0;
+            border-left: 6px solid var(--blue);
+        }
+
+        html[lang="en"] .code {
+            direction: ltr;
+            text-align: left;
+        }
+
+        html[lang="fa"] .code {
+            direction: ltr;
+            text-align: left;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 60px 9vw 100px;
+            animation: show .4s ease;
+        }
+
+            .slide.active {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+        @keyframes show {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cover {
+            color: white;
+            text-align: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(16,42,67,.98), rgba(25,118,210,.9)), radial-gradient(circle at 80% 20%, var(--orange), transparent 30%);
+        }
+
+            .cover h1 {
+                max-width: 980px;
+                font-size: clamp(2.2rem, 5vw, 4.7rem);
+                line-height: 1.4;
+                margin: 0 0 20px;
+                font-weight: 800;
+            }
+
+            .cover h2 {
+                font-size: clamp(1.1rem, 2.3vw, 1.8rem);
+                font-weight: 400;
+                opacity: .9;
+                margin: 0 0 55px;
+            }
+
+        .author {
+            font-size: 1.35rem;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,.45);
+        }
+
+        h2 {
+            margin: 0 0 25px;
+            color: var(--navy);
+            font-size: clamp(1.8rem, 3.2vw, 3rem);
+        }
+
+        h3 {
+            color: var(--blue);
+            margin-top: 0;
+        }
+
+        p, li {
+            font-size: clamp(1rem, 1.45vw, 1.25rem);
+            line-height: 2;
+        }
+
+        ul {
+            padding-right: 26px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .lead {
+            max-width: 1000px;
+            font-size: clamp(1.2rem, 2vw, 1.65rem);
+            line-height: 2.1;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .card {
+            padding: 22px;
+            background: rgba(255,255,255,.92);
+            border: 1px solid #dbe6f0;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(16,42,67,.08);
+            line-height: 1.9;
+        }
+
+            .card strong {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--blue);
+                font-size: 1.2rem;
+            }
+
+        .diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 25px 0;
+        }
+
+        .box {
+            min-width: 145px;
+            padding: 18px 16px;
+            color: white;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(16,42,67,.16);
+        }
+
+        .big {
+            min-width: 260px;
+            padding: 32px 20px;
+            background: var(--navy);
+            font-size: 1.2rem;
+        }
+
+        .blue {
+            background: var(--blue);
+        }
+
+        .orange {
+            background: var(--orange);
+        }
+
+        .green {
+            background: var(--green);
+        }
+
+        .red {
+            background: var(--red);
+        }
+
+        .arrow {
+            color: var(--orange);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        html[lang="en"] .arrow {
+            transform: scaleX(-1);
+        }
+
+        .highlight {
+            margin-top: 22px;
+            padding: 18px 23px;
+            background: #eaf4ff;
+            border-right: 6px solid var(--blue);
+            border-radius: 13px;
+            line-height: 2;
+            font-size: 1.1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(16,42,67,.08);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e3ebf2;
+            font-size: 1rem;
+        }
+
+        th {
+            color: white;
+            background: var(--navy);
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .step {
+            padding: 20px 14px;
+            text-align: center;
+            background: white;
+            border-top: 6px solid var(--orange);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(16,42,67,.07);
+            line-height: 1.8;
+        }
+
+            .step span {
+                display: block;
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                margin: auto auto 10px;
+                color: white;
+                background: var(--blue);
+                border-radius: 50%;
+                font-weight: 700;
+            }
+
+        .footer {
+            position: absolute;
+            right: 9vw;
+            left: 9vw;
+            bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .cover .footer {
+            color: rgba(255,255,255,.7);
+        }
+
+        .controls {
+            position: fixed;
+            z-index: 10;
+            bottom: 17px;
+            left: 50%;
+            display: flex;
+            gap: 8px;
+            transform: translateX(-50%);
+        }
+
+        button {
+            padding: 10px 17px;
+            color: white;
+            background: var(--navy);
+            border: 0;
+            border-radius: 9px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+            button:hover {
+                background: var(--blue);
+            }
+
+        /* دکمه انتخاب زبان */
+        .lang-switch {
+            position: fixed;
+            z-index: 30;
+            top: 18px;
+            right: 18px;
+            display: flex;
+            gap: 6px;
+            background: rgba(255,255,255,.95);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(16,42,67,.15);
+            direction: ltr;
+        }
+
+            .lang-switch button {
+                padding: 6px 14px;
+                background: transparent;
+                color: var(--navy);
+                font-weight: 700;
+                border-radius: 8px;
+            }
+
+                .lang-switch button.active {
+                    background: var(--blue);
+                    color: white;
+                }
+
+        .progress {
+            position: fixed;
+            z-index: 20;
+            top: 0;
+            right: 0;
+            height: 5px;
+            background: var(--orange);
+            transition: width .3s;
+        }
+
+        .code {
+            direction: ltr;
+            text-align: left;
+            padding: 20px;
+            color: #eaf4ff;
+            background: #102a43;
+            border-radius: 14px;
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 800px) {
+            body {
+                overflow: auto;
+            }
+
+            .slide {
+                min-height: 100vh;
+                height: auto;
+                padding: 38px 7vw 100px;
+            }
+
+            .cards, .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .diagram {
+                gap: 9px;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+
+            html[lang="en"] .arrow {
+                transform: rotate(-90deg);
+            }
+
+            th, td {
+                padding: 8px 4px;
+                font-size: .78rem;
+            }
+
+            .lang-switch {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- دکمه انتخاب زبان -->
+    <div class="lang-switch">
+        <button data-lang="fa" class="active">فارسی</button>
+        <button data-lang="en">English</button>
+    </div>
+
+    <!-- اسلاید ۱ -->
+    <section class="slide cover active">
+        <h1 data-i18n="s1.title">چالش‌ها و راهکارهای معماری میکروسرویس</h1>
+        <h2 data-i18n="s1.subtitle">توضیح ساده و بررسی کلی مقاله</h2>
+        <div class="author">
+            <span data-i18n="s1.author">ارائه‌دهنده: فرشاد فاضلی</span>
+        </div>
+        <div class="footer">
+            <span data-i18n="s1.footer">معماری نرم‌افزار</span>
+            <span>1</span>
+        </div>
+    </section>
+
+    <!-- اسلاید ۲ -->
+    <section class="slide">
+        <h2 data-i18n="s2.title">نرم‌افزار چیست؟</h2>
+        <p class="lead" data-i18n="s2.lead">
+            نرم‌افزار مجموعه‌ای از برنامه‌ها و دستورهاست که برای انجام یک کار مشخص طراحی می‌شود.
+        </p>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s2.c1t">برنامه بانکی</strong><span data-i18n="s2.c1d">مدیریت حساب، انتقال پول و پرداخت.</span></div>
+            <div class="card"><strong data-i18n="s2.c2t">فروشگاه اینترنتی</strong><span data-i18n="s2.c2d">نمایش کالا، ثبت سفارش و پرداخت.</span></div>
+            <div class="card"><strong data-i18n="s2.c3t">سامانه دانشگاه</strong><span data-i18n="s2.c3d">انتخاب واحد، نمرات و اطلاعات دانشجو.</span></div>
+        </div>
+        <div class="highlight" data-i18n="s2.hl">
+            هرچه نرم‌افزار بزرگ‌تر شود، طراحی و مدیریت آن نیز اهمیت بیشتری پیدا می‌کند.
+        </div>
+        <div class="footer"><span data-i18n="s2.footer">مفاهیم ابتدایی</span><span>2</span></div>
+    </section>
+
+    <!-- اسلاید ۳ -->
+    <section class="slide">
+        <h2 data-i18n="s3.title">معماری نرم‌افزار چیست؟</h2>
+        <p class="lead" data-i18n="s3.lead">
+            معماری نرم‌افزار مانند نقشه ساختمان است. این معماری مشخص می‌کند قسمت‌های مختلف نرم‌افزار چگونه ساخته و به هم متصل شوند.
+        </p>
+        <ul>
+            <li data-i18n="s3.l1">هر بخش چه وظیفه‌ای دارد؟</li>
+            <li data-i18n="s3.l2">اطلاعات چگونه بین بخش‌ها منتقل می‌شود؟</li>
+            <li data-i18n="s3.l3">چگونه می‌توان نرم‌افزار را تغییر داد؟</li>
+            <li data-i18n="s3.l4">چطور می‌توان نرم‌افزار را توسعه و نگهداری کرد؟</li>
+        </ul>
+        <div class="footer"><span data-i18n="s3.footer">مفاهیم ابتدایی</span><span>3</span></div>
+    </section>
+
+    <!-- اسلاید ۴ -->
+    <section class="slide">
+        <h2 data-i18n="s4.title">یک مثال ساده: فروشگاه اینترنتی</h2>
+        <p class="lead" data-i18n="s4.lead">
+            یک فروشگاه اینترنتی فقط یک صفحه برای خرید نیست؛ بلکه از بخش‌های مختلفی تشکیل شده است.
+        </p>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s4.c1t">کاربران</strong><span data-i18n="s4.c1d">ثبت‌نام، ورود و اطلاعات مشتری.</span></div>
+            <div class="card"><strong data-i18n="s4.c2t">محصولات</strong><span data-i18n="s4.c2d">نمایش کالاها، قیمت و موجودی.</span></div>
+            <div class="card"><strong data-i18n="s4.c3t">سبد خرید</strong><span data-i18n="s4.c3d">نگهداری کالاهای انتخاب‌شده.</span></div>
+            <div class="card"><strong data-i18n="s4.c4t">پرداخت</strong><span data-i18n="s4.c4d">انجام تراکنش مالی.</span></div>
+            <div class="card"><strong data-i18n="s4.c5t">سفارش‌ها</strong><span data-i18n="s4.c5d">ثبت و پیگیری خرید.</span></div>
+            <div class="card"><strong data-i18n="s4.c6t">ارسال</strong><span data-i18n="s4.c6d">مدیریت ارسال کالا برای مشتری.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s4.footer">مثال کاربردی</span><span>4</span></div>
+    </section>
+
+    <!-- اسلاید ۵ -->
+    <section class="slide">
+        <h2 data-i18n="s5.title">معماری یکپارچه چیست؟</h2>
+        <p class="lead" data-i18n="s5.lead">
+            در معماری یکپارچه، همه بخش‌های نرم‌افزار داخل یک برنامه بزرگ قرار دارند.
+        </p>
+        <div class="diagram">
+            <div class="box big" data-i18n="s5.big">فروشگاه اینترنتی</div>
+            <div class="arrow">←</div>
+            <div class="box blue" data-i18n="s5.b1">کاربران</div>
+            <div class="box orange" data-i18n="s5.b2">محصولات</div>
+            <div class="box green" data-i18n="s5.b3">پرداخت</div>
+            <div class="box red" data-i18n="s5.b4">سفارش‌ها</div>
+        </div>
+        <div class="highlight" data-i18n="s5.hl">
+            در این روش، بخش‌ها معمولاً به هم وابستگی زیادی دارند.
+        </div>
+        <div class="footer"><span data-i18n="s5.footer">معماری سنتی</span><span>5</span></div>
+    </section>
+
+    <!-- اسلاید ۶ -->
+    <section class="slide">
+        <h2 data-i18n="s6.title">مشکلات معماری یکپارچه</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s6.c1t">وابستگی زیاد</strong><span data-i18n="s6.c1d">تغییر یک قسمت ممکن است روی قسمت‌های دیگر اثر بگذارد.</span></div>
+            <div class="card"><strong data-i18n="s6.c2t">انتشار سخت</strong><span data-i18n="s6.c2d">برای تغییر کوچک، گاهی باید کل برنامه منتشر شود.</span></div>
+            <div class="card"><strong data-i18n="s6.c3t">خطایابی دشوار</strong><span data-i18n="s6.c3d">پیدا کردن مشکل در یک برنامه بزرگ زمان‌بر است.</span></div>
+            <div class="card"><strong data-i18n="s6.c4t">توسعه تیمی سخت‌تر</strong><span data-i18n="s6.c4d">چند تیم باید روی یک کد بزرگ کار کنند.</span></div>
+            <div class="card"><strong data-i18n="s6.c5t">مقیاس‌پذیری محدود</strong><span data-i18n="s6.c5d">گاهی باید کل برنامه را قوی‌تر کنیم.</span></div>
+            <div class="card"><strong data-i18n="s6.c6t">اثر خطا</strong><span data-i18n="s6.c6d">خرابی یک قسمت می‌تواند روی کل سیستم اثر بگذارد.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s6.footer">مشکلات معماری سنتی</span><span>6</span></div>
+    </section>
+
+    <!-- اسلاید ۷ -->
+    <section class="slide">
+        <h2 data-i18n="s7.title">میکروسرویس چیست؟</h2>
+        <p class="lead" data-i18n="s7.lead">
+            در معماری میکروسرویس، یک نرم‌افزار بزرگ به چند سرویس کوچک تقسیم می‌شود. هر سرویس وظیفه مشخصی دارد و می‌تواند مستقل توسعه پیدا کند.
+        </p>
+        <div class="diagram">
+            <div class="box big" data-i18n="s7.big">سیستم بزرگ</div>
+            <div class="arrow">←</div>
+            <div class="box blue" data-i18n="s7.b1">سرویس کاربران</div>
+            <div class="box orange" data-i18n="s7.b2">سرویس محصولات</div>
+            <div class="box green" data-i18n="s7.b3">سرویس پرداخت</div>
+            <div class="box red" data-i18n="s7.b4">سرویس سفارش</div>
+        </div>
+        <div class="footer"><span data-i18n="s7.footer">معرفی میکروسرویس</span><span>7</span></div>
+    </section>
+
+    <!-- اسلاید ۸ -->
+    <section class="slide">
+        <h2 data-i18n="s8.title">ویژگی‌های هر میکروسرویس</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s8.c1t">وظیفه مشخص</strong><span data-i18n="s8.c1d">هر سرویس یک کار اصلی انجام می‌دهد.</span></div>
+            <div class="card"><strong data-i18n="s8.c2t">استقلال</strong><span data-i18n="s8.c2d">سرویس‌ها تا حد زیادی جدا از هم کار می‌کنند.</span></div>
+            <div class="card"><strong data-i18n="s8.c3t">توسعه جداگانه</strong><span data-i18n="s8.c3d">تیم‌ها می‌توانند روی سرویس‌های مختلف کار کنند.</span></div>
+            <div class="card"><strong data-i18n="s8.c4t">انتشار جداگانه</strong><span data-i18n="s8.c4d">هر سرویس می‌تواند مستقل به‌روزرسانی شود.</span></div>
+            <div class="card"><strong data-i18n="s8.c5t">ارتباط شبکه‌ای</strong><span data-i18n="s8.c5d">سرویس‌ها از طریق شبکه با یکدیگر ارتباط دارند.</span></div>
+            <div class="card"><strong data-i18n="s8.c6t">چرخه عمر مستقل</strong><span data-i18n="s8.c6d">هر سرویس می‌تواند جداگانه تغییر کند.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s8.footer">ویژگی‌های اصلی</span><span>8</span></div>
+    </section>
+
+    <!-- اسلاید ۹ -->
+    <section class="slide">
+        <h2 data-i18n="s9.title">مثال میکروسرویس در فروشگاه</h2>
+        <div class="code">
+            User Service      → اطلاعات کاربران<br>
+            Product Service   → اطلاعات محصولات<br>
+            Cart Service      → سبد خرید<br>
+            Payment Service   → پرداخت<br>
+            Order Service     → سفارش‌ها<br>
+            Delivery Service  → ارسال کالا
+        </div>
+        <p class="lead" data-i18n="s9.lead">
+            هر سرویس می‌تواند با فناوری و پایگاه داده مناسب خودش ساخته شود؛ البته این استقلال، مدیریت سیستم را پیچیده‌تر می‌کند.
+        </p>
+        <div class="footer"><span data-i18n="s9.footer">مثال کاربردی</span><span>9</span></div>
+    </section>
+
+    <!-- اسلاید ۱۰ -->
+    <section class="slide">
+        <h2 data-i18n="s10.title">مقایسه معماری یکپارچه و میکروسرویس</h2>
+        <table>
+            <tr>
+                <th data-i18n="s10.th1">موضوع</th>
+                <th data-i18n="s10.th2">یکپارچه</th>
+                <th data-i18n="s10.th3">میکروسرویس</th>
+            </tr>
+            <tr>
+                <td data-i18n="s10.r1c1">ساختار</td>
+                <td data-i18n="s10.r1c2">یک برنامه بزرگ</td>
+                <td data-i18n="s10.r1c3">چند سرویس کوچک</td>
+            </tr>
+            <tr>
+                <td data-i18n="s10.r2c1">توسعه</td>
+                <td data-i18n="s10.r2c2">وابستگی بیشتر</td>
+                <td data-i18n="s10.r2c3">استقلال بیشتر</td>
+            </tr>
+            <tr>
+                <td data-i18n="s10.r3c1">انتشار</td>
+                <td data-i18n="s10.r3c2">معمولاً کل برنامه</td>
+                <td data-i18n="s10.r3c3">هر سرویس جداگانه</td>
+            </tr>
+            <tr>
+                <td data-i18n="s10.r4c1">پیچیدگی اجرا</td>
+                <td data-i18n="s10.r4c2">کمتر</td>
+                <td data-i18n="s10.r4c3">بیشتر</td>
+            </tr>
+        </table>
+        <div class="footer"><span data-i18n="s10.footer">مقایسه معماری‌ها</span><span>10</span></div>
+    </section>
+
+    <!-- اسلاید ۱۱ -->
+    <section class="slide">
+        <h2 data-i18n="s11.title">مزیت اول: توسعه مستقل</h2>
+        <p class="lead" data-i18n="s11.lead">
+            در معماری میکروسرویس، تیم‌های مختلف می‌توانند روی سرویس‌های مختلف کار کنند.
+        </p>
+        <div class="diagram">
+            <div class="box blue" data-i18n="s11.b1">تیم کاربران</div>
+            <div class="box orange" data-i18n="s11.b2">تیم محصولات</div>
+            <div class="box green" data-i18n="s11.b3">تیم پرداخت</div>
+            <div class="box red" data-i18n="s11.b4">تیم سفارش</div>
+        </div>
+        <ul>
+            <li data-i18n="s11.l1">تقسیم وظایف بین تیم‌ها آسان‌تر می‌شود.</li>
+            <li data-i18n="s11.l2">تیم‌ها کمتر مزاحم کار یکدیگر می‌شوند.</li>
+            <li data-i18n="s11.l3">توسعه بخش‌های مختلف می‌تواند هم‌زمان انجام شود.</li>
+        </ul>
+        <div class="footer"><span data-i18n="s11.footer">مزایای میکروسرویس</span><span>11</span></div>
+    </section>
+
+    <!-- اسلاید ۱۲ -->
+    <section class="slide">
+        <h2 data-i18n="s12.title">مزیت دوم: تغییر و انتشار سریع‌تر</h2>
+        <p class="lead" data-i18n="s12.lead">
+            اگر فقط سرویس پرداخت تغییر کند، لازم نیست همه قسمت‌های فروشگاه دوباره تغییر یا منتشر شوند.
+        </p>
+        <div class="highlight" data-i18n="s12.hl">
+            این ویژگی باعث می‌شود شرکت‌ها بتوانند سریع‌تر قابلیت‌های جدید را به کاربران ارائه کنند.
+        </div>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s12.c1t">تغییر محدود</strong><span data-i18n="s12.c1d">تغییرات معمولاً به همان سرویس محدود می‌شود.</span></div>
+            <div class="card"><strong data-i18n="s12.c2t">انتشار سریع</strong><span data-i18n="s12.c2d">هر سرویس می‌تواند جداگانه منتشر شود.</span></div>
+            <div class="card"><strong data-i18n="s12.c3t">کاهش ریسک</strong><span data-i18n="s12.c3d">احتمال خراب شدن بخش‌های غیرمرتبط کمتر است.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s12.footer">مزایای میکروسرویس</span><span>12</span></div>
+    </section>
+
+    <!-- اسلاید ۱۳ -->
+    <section class="slide">
+        <h2 data-i18n="s13.title">مزیت سوم: مقیاس‌پذیری</h2>
+        <p class="lead" data-i18n="s13.lead">
+            بعضی قسمت‌های نرم‌افزار بیشتر از قسمت‌های دیگر استفاده می‌شوند. در میکروسرویس می‌توان فقط همان قسمت را تقویت کرد.
+        </p>
+        <div class="diagram">
+            <div class="box blue" data-i18n="s13.b1">کاربران کم</div>
+            <div class="box orange" data-i18n="s13.b2">محصولات پرترافیک</div>
+            <div class="box green" data-i18n="s13.b3">پرداخت متوسط</div>
+        </div>
+        <div class="highlight" data-i18n="s13.hl">
+            مثلاً اگر بخش محصولات بازدید زیادی داشته باشد، فقط سرویس محصولات را می‌توان بزرگ‌تر و قوی‌تر کرد.
+        </div>
+        <div class="footer"><span data-i18n="s13.footer">مقیاس‌پذیری</span><span>13</span></div>
+    </section>
+
+    <!-- اسلاید ۱۴ -->
+    <section class="slide">
+        <h2 data-i18n="s14.title">چرا میکروسرویس همیشه مناسب نیست؟</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s14.c1t">پیچیدگی بیشتر</strong><span data-i18n="s14.c1d">تعداد سرویس‌ها، ارتباط‌ها و تنظیمات زیاد می‌شود.</span></div>
+            <div class="card"><strong data-i18n="s14.c2t">هزینه بیشتر</strong><span data-i18n="s14.c2d">سرور، ابزار و نیروی متخصص بیشتری لازم است.</span></div>
+            <div class="card"><strong data-i18n="s14.c3t">خطایابی سخت‌تر</strong><span data-i18n="s14.c3d">مشکل ممکن است در ارتباط بین چند سرویس باشد.</span></div>
+            <div class="card"><strong data-i18n="s14.c4t">مناسب نبودن برای پروژه کوچک</strong><span data-i18n="s14.c4d">برای برنامه ساده، معماری یکپارچه کافی است.</span></div>
+        </div>
+        <div class="highlight" data-i18n="s14.hl">
+            پس قبل از انتخاب میکروسرویس باید اندازه پروژه، تعداد اعضای تیم و نیازهای آینده بررسی شود.
+        </div>
+        <div class="footer"><span data-i18n="s14.footer">محدودیت‌ها</span><span>14</span></div>
+    </section>
+
+    <!-- اسلاید ۱۵ -->
+    <section class="slide">
+        <h2 data-i18n="s15.title">معرفی مقاله</h2>
+        <p class="lead" data-i18n="s15.lead">
+            مقاله با عنوان «چالش‌ها و راهکارهای معماری میکروسرویس: یک مرور نظام‌مند ادبیات» به بررسی مشکلات و راهکارهای مربوط به معماری میکروسرویس می‌پردازد. [1]
+        </p>
+        <div class="highlight" data-i18n="s15.hl">
+            این مقاله فقط یک سیستم خاص را بررسی نمی‌کند؛ بلکه پژوهش‌های مختلف درباره معماری میکروسرویس را جمع‌آوری و تحلیل می‌کند.
+        </div>
+        <p data-i18n="s15.p">
+            هدف کلی مقاله این است که نشان دهد استفاده از میکروسرویس چه مزایایی دارد و در چه قسمت‌هایی ممکن است برای تیم‌ها و سازمان‌ها مشکل ایجاد کند.
+        </p>
+        <div class="footer"><span data-i18n="s15.footer">معرفی مقاله</span><span>15</span></div>
+    </section>
+
+    <!-- اسلاید ۱۶ -->
+    <section class="slide">
+        <h2 data-i18n="s16.title">مرور نظام‌مند ادبیات یعنی چه؟</h2>
+        <p class="lead" data-i18n="s16.lead">
+            مرور نظام‌مند یعنی نویسندگان به جای بررسی یک مثال، پژوهش‌های قبلی را با روش مشخص جمع‌آوری و دسته‌بندی می‌کنند.
+        </p>
+        <div class="steps">
+            <div class="step"><span>1</span><strong data-i18n="s16.s1t">جست‌وجو</strong><br><span data-i18n="s16.s1d">پیدا کردن پژوهش‌های مرتبط</span></div>
+            <div class="step"><span>2</span><strong data-i18n="s16.s2t">انتخاب</strong><br><span data-i18n="s16.s2d">انتخاب مطالعات مناسب</span></div>
+            <div class="step"><span>3</span><strong data-i18n="s16.s3t">بررسی</strong><br><span data-i18n="s16.s3d">استخراج اطلاعات مهم</span></div>
+            <div class="step"><span>4</span><strong data-i18n="s16.s4t">جمع‌بندی</strong><br><span data-i18n="s16.s4d">تحلیل و دسته‌بندی نتایج</span></div>
+        </div>
+        <p data-i18n="s16.p">
+            در مقاله، داده‌های مطالعات انتخاب‌شده بررسی و به شکل کیفی و کمی تحلیل شده‌اند. [1]
+        </p>
+        <div class="footer"><span data-i18n="s16.footer">روش پژوهش مقاله</span><span>16</span></div>
+    </section>
+
+    <!-- اسلاید ۱۷ -->
+    <section class="slide">
+        <h2 data-i18n="s17.title">هدف اصلی مقاله</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s17.c1t">سؤال اول</strong><span data-i18n="s17.c1d">مهم‌ترین چالش‌های معماری میکروسرویس چه هستند؟</span></div>
+            <div class="card"><strong data-i18n="s17.c2t">سؤال دوم</strong><span data-i18n="s17.c2d">برای حل این چالش‌ها چه راهکارهایی پیشنهاد شده است؟</span></div>
+            <div class="card"><strong data-i18n="s17.c3t">نتیجه مورد انتظار</strong><span data-i18n="s17.c3d">ارائه یک تصویر کلی برای کمک به انتخاب و استفاده بهتر از میکروسرویس.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s17.footer">هدف مقاله</span><span>17</span></div>
+    </section>
+
+    <!-- اسلاید ۱۸ -->
+    <section class="slide">
+        <h2 data-i18n="s18.title">مهم‌ترین چالش‌های مطرح‌شده</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s18.c1t">ارتباط سرویس‌ها</strong><span data-i18n="s18.c1d">سرویس‌ها باید سریع و مطمئن با هم ارتباط داشته باشند.</span></div>
+            <div class="card"><strong data-i18n="s18.c2t">مدیریت داده</strong><span data-i18n="s18.c2d">داده‌های سرویس‌های مختلف باید هماهنگ باقی بمانند.</span></div>
+            <div class="card"><strong data-i18n="s18.c3t">امنیت</strong><span data-i18n="s18.c3d">تعداد نقاطی که باید محافظت شوند بیشتر می‌شود.</span></div>
+            <div class="card"><strong data-i18n="s18.c4t">نظارت</strong><span data-i18n="s18.c4d">وضعیت تعداد زیادی سرویس باید کنترل شود.</span></div>
+            <div class="card"><strong data-i18n="s18.c5t">خطایابی</strong><span data-i18n="s18.c5d">باید مشخص شود خطا در کدام سرویس اتفاق افتاده است.</span></div>
+            <div class="card"><strong data-i18n="s18.c6t">استقرار</strong><span data-i18n="s18.c6d">اجرا و به‌روزرسانی سرویس‌ها مدیریت بیشتری لازم دارد.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s18.footer">نتایج کلی مقاله</span><span>18</span></div>
+    </section>
+
+    <!-- اسلاید ۱۹ -->
+    <section class="slide">
+        <h2 data-i18n="s19.title">چالش ارتباط بین سرویس‌ها</h2>
+        <div class="diagram">
+            <div class="box blue" data-i18n="s19.b1">سفارش</div>
+            <div class="arrow">←</div>
+            <div class="box orange" data-i18n="s19.b2">محصولات</div>
+            <div class="arrow">←</div>
+            <div class="box green" data-i18n="s19.b3">پرداخت</div>
+            <div class="arrow">←</div>
+            <div class="box red" data-i18n="s19.b4">ارسال</div>
+        </div>
+        <p class="lead" data-i18n="s19.lead">
+            یک درخواست کاربر ممکن است از چند سرویس عبور کند. اگر یکی از سرویس‌ها کند یا قطع شود، کل فرایند ممکن است دچار مشکل شود.
+        </p>
+        <ul>
+            <li data-i18n="s19.l1">استفاده از روش‌های ارتباطی استاندارد</li>
+            <li data-i18n="s19.l2">ثبت درخواست‌ها و خطاها</li>
+            <li data-i18n="s19.l3">کنترل زمان پاسخ سرویس‌ها</li>
+            <li data-i18n="s19.l4">استفاده از صف پیام در بعضی فرایندها</li>
+        </ul>
+        <div class="footer"><span data-i18n="s19.footer">چالش‌های مقاله</span><span>19</span></div>
+    </section>
+
+    <!-- اسلاید ۲۰ -->
+    <section class="slide">
+        <h2 data-i18n="s20.title">چالش مدیریت داده‌ها</h2>
+        <p class="lead" data-i18n="s20.lead">
+            در معماری میکروسرویس، هر سرویس ممکن است داده‌های مخصوص خود را داشته باشد.
+        </p>
+        <div class="diagram">
+            <div class="box blue"><span data-i18n="s20.b1t">کاربران</span><br><span data-i18n="s20.b1d">اطلاعات مشتری</span></div>
+            <div class="box orange"><span data-i18n="s20.b2t">محصولات</span><br><span data-i18n="s20.b2d">اطلاعات کالا</span></div>
+            <div class="box green"><span data-i18n="s20.b3t">سفارش‌ها</span><br><span data-i18n="s20.b3d">اطلاعات خرید</span></div>
+            <div class="box red"><span data-i18n="s20.b4t">پرداخت</span><br><span data-i18n="s20.b4d">تراکنش‌ها</span></div>
+        </div>
+        <div class="highlight" data-i18n="s20.hl">
+            این جداسازی استقلال ایجاد می‌کند؛ اما هماهنگ نگه داشتن اطلاعات بین سرویس‌ها می‌تواند دشوار باشد.
+        </div>
+        <div class="footer"><span data-i18n="s20.footer">چالش‌های مقاله</span><span>20</span></div>
+    </section>
+
+    <!-- اسلاید ۲۱ -->
+    <section class="slide">
+        <h2 data-i18n="s21.title">چالش امنیت</h2>
+        <p class="lead" data-i18n="s21.lead">
+            در یک سیستم میکروسرویسی، فقط یک برنامه وجود ندارد؛ بلکه چندین سرویس و ارتباط مختلف باید محافظت شوند.
+        </p>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s21.c1t">احراز هویت</strong><span data-i18n="s21.c1d">مشخص شود کاربر چه کسی است.</span></div>
+            <div class="card"><strong data-i18n="s21.c2t">سطح دسترسی</strong><span data-i18n="s21.c2d">هر کاربر فقط به بخش‌های مجاز دسترسی داشته باشد.</span></div>
+            <div class="card"><strong data-i18n="s21.c3t">رمزنگاری</strong><span data-i18n="s21.c3d">اطلاعات هنگام انتقال محافظت شود.</span></div>
+            <div class="card"><strong data-i18n="s21.c4t">ثبت فعالیت‌ها</strong><span data-i18n="s21.c4d">درخواست‌ها و اتفاقات مهم ثبت شوند.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s21.footer">چالش‌های مقاله</span><span>21</span></div>
+    </section>
+
+    <!-- اسلاید ۲۲ -->
+    <section class="slide">
+        <h2 data-i18n="s22.title">چالش نظارت و خطایابی</h2>
+        <p class="lead" data-i18n="s22.lead">
+            وقتی یک درخواست از چند سرویس عبور می‌کند، پیدا کردن محل خطا دشوارتر می‌شود.
+        </p>
+        <div class="code">
+            User → Order → Product → Payment → Delivery<br><br>
+            <span data-i18n="s22.code">اگر پاسخ دریافت نشود، باید مشخص شود مشکل در کدام مرحله بوده است.</span>
+        </div>
+        <ul>
+            <li data-i18n="s22.l1">ثبت گزارش‌های دقیق</li>
+            <li data-i18n="s22.l2">استفاده از شناسه مشترک برای هر درخواست</li>
+            <li data-i18n="s22.l3">بررسی وضعیت سرویس‌ها</li>
+            <li data-i18n="s22.l4">ثبت زمان پاسخ و خطاها</li>
+        </ul>
+        <div class="footer"><span data-i18n="s22.footer">چالش‌های مقاله</span><span>22</span></div>
+    </section>
+
+    <!-- اسلاید ۲۳ -->
+    <section class="slide">
+        <h2 data-i18n="s23.title">اندازه مناسب سرویس‌ها</h2>
+        <p class="lead" data-i18n="s23.lead">
+            سرویس‌ها نباید آن‌قدر بزرگ باشند که دوباره شبیه یک برنامه یکپارچه شوند، و نباید آن‌قدر کوچک باشند که تعداد ارتباط‌ها بیش از حد زیاد شود.
+        </p>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s23.c1t">سرویس خیلی بزرگ</strong><span data-i18n="s23.c1d">استقلال کم می‌شود و تغییر دادن آن سخت‌تر است.</span></div>
+            <div class="card"><strong data-i18n="s23.c2t">سرویس خیلی کوچک</strong><span data-i18n="s23.c2d">تعداد سرویس‌ها و ارتباط‌ها بیش از حد زیاد می‌شود.</span></div>
+            <div class="card"><strong data-i18n="s23.c3t">انتخاب مناسب</strong><span data-i18n="s23.c3d">هر سرویس باید یک مسئولیت مشخص و منطقی داشته باشد.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s23.footer">طراحی سرویس‌ها</span><span>23</span></div>
+    </section>
+
+    <!-- اسلاید ۲۴ -->
+    <section class="slide">
+        <h2 data-i18n="s24.title">راهکارهای کلی برای موفقیت</h2>
+        <div class="steps">
+            <div class="step"><span>1</span><strong data-i18n="s24.s1t">طراحی درست</strong><br><span data-i18n="s24.s1d">مرز سرویس‌ها دقیق مشخص شود.</span></div>
+            <div class="step"><span>2</span><strong data-i18n="s24.s2t">ارتباط مناسب</strong><br><span data-i18n="s24.s2d">روش ارتباط سرویس‌ها استاندارد باشد.</span></div>
+            <div class="step"><span>3</span><strong data-i18n="s24.s3t">نظارت مداوم</strong><br><span data-i18n="s24.s3d">وضعیت سرویس‌ها همیشه بررسی شود.</span></div>
+            <div class="step"><span>4</span><strong data-i18n="s24.s4t">تیم آماده</strong><br><span data-i18n="s24.s4d">اعضای تیم ابزارها را بشناسند.</span></div>
+        </div>
+        <div class="highlight" data-i18n="s24.hl">
+            اجرای موفق میکروسرویس فقط به برنامه‌نویسی وابسته نیست؛ ابزار، تیم، امنیت، داده و روش استقرار نیز اهمیت دارند.
+        </div>
+        <div class="footer"><span data-i18n="s24.footer">راهکارها</span><span>24</span></div>
+    </section>
+
+    <!-- اسلاید ۲۵ -->
+    <section class="slide">
+        <h2 data-i18n="s25.title">چه زمانی میکروسرویس مناسب است؟</h2>
+        <ul>
+            <li data-i18n="s25.l1">سیستم بزرگ و پیچیده باشد.</li>
+            <li data-i18n="s25.l2">چند تیم مختلف روی پروژه کار کنند.</li>
+            <li data-i18n="s25.l3">بخش‌های مختلف سیستم مستقل از هم تغییر کنند.</li>
+            <li data-i18n="s25.l4">تعداد کاربران زیاد باشد.</li>
+            <li data-i18n="s25.l5">نیاز به مقیاس‌پذیری وجود داشته باشد.</li>
+            <li data-i18n="s25.l6">سازمان ابزار و نیروی متخصص لازم را داشته باشد.</li>
+        </ul>
+        <div class="highlight" data-i18n="s25.hl">
+            میکروسرویس بیشتر برای پروژه‌هایی مناسب است که واقعاً به استقلال و مقیاس‌پذیری سرویس‌ها نیاز دارند.
+        </div>
+        <div class="footer"><span data-i18n="s25.footer">انتخاب معماری</span><span>25</span></div>
+    </section>
+
+    <!-- اسلاید ۲۶ -->
+    <section class="slide">
+        <h2 data-i18n="s26.title">چه زمانی بهتر است از آن استفاده نکنیم؟</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s26.c1t">پروژه کوچک</strong><span data-i18n="s26.c1d">برای برنامه کوچک، پیچیدگی میکروسرویس ضروری نیست.</span></div>
+            <div class="card"><strong data-i18n="s26.c2t">تیم بسیار کوچک</strong><span data-i18n="s26.c2d">مدیریت تعداد زیادی سرویس برای تیم کوچک دشوار است.</span></div>
+            <div class="card"><strong data-i18n="s26.c3t">نیازمندی نامشخص</strong><span data-i18n="s26.c3d">ابتدا باید ساختار اصلی سیستم مشخص شود.</span></div>
+            <div class="card"><strong data-i18n="s26.c4t">کمبود ابزار</strong><span data-i18n="s26.c4d">بدون ابزار نظارت و استقرار، مدیریت سخت می‌شود.</span></div>
+        </div>
+        <div class="footer"><span data-i18n="s26.footer">انتخاب معماری</span><span>26</span></div>
+    </section>
+
+    <!-- اسلاید ۲۷ -->
+    <section class="slide">
+        <h2 data-i18n="s27.title">جمع‌بندی مقاله</h2>
+        <p class="lead" data-i18n="s27.lead">
+            مقاله نشان می‌دهد که معماری میکروسرویس می‌تواند انعطاف‌پذیری، استقلال و سرعت توسعه را افزایش دهد؛ اما در کنار آن، چالش‌های زیادی هم ایجاد می‌کند. [1]
+        </p>
+        <div class="highlight" data-i18n="s27.hl">
+            مهم‌ترین پیام مقاله این است که استفاده از میکروسرویس باید با توجه به نیازهای پروژه، توانایی تیم و امکانات سازمان انجام شود.
+        </div>
+        <div class="footer"><span data-i18n="s27.footer">جمع‌بندی مقاله</span><span>27</span></div>
+    </section>
+
+    <!-- اسلاید ۲۸ -->
+    <section class="slide">
+        <h2 data-i18n="s28.title">نتیجه‌گیری نهایی</h2>
+        <div class="cards">
+            <div class="card"><strong data-i18n="s28.c1t">میکروسرویس چیست؟</strong><span data-i18n="s28.c1d">تقسیم یک سیستم بزرگ به سرویس‌های کوچک و مستقل.</span></div>
+            <div class="card"><strong data-i18n="s28.c2t">مزیت اصلی چیست؟</strong><span data-i18n="s28.c2d">توسعه، تغییر و مقیاس‌دهی مستقل سرویس‌ها.</span></div>
+            <div class="card"><strong data-i18n="s28.c3t">مشکل اصلی چیست؟</strong><span data-i18n="s28.c3d">مدیریت ارتباط، داده، امنیت و خطاها.</span></div>
+        </div>
+        <p class="lead" data-i18n="s28.lead">
+            در نهایت، میکروسرویس یک ابزار جادویی نیست؛ بلکه یک انتخاب معماری است که باید با برنامه‌ریزی و شناخت کافی استفاده شود.
+        </p>
+        <div class="highlight">
+            <span data-i18n="s28.hl1">ممنون از توجه شما</span><br>
+            <span data-i18n="s28.hl2">ارائه‌دهنده: فرشاد فاضلی</span>
+        </div>
+        <div class="footer"><span data-i18n="s28.footer">پایان ارائه</span><span>28</span></div>
+    </section>
+
+    <div class="progress" id="progress"></div>
+
+    <div class="controls">
+        <button onclick="previousSlide()" data-i18n="btn.prev">قبلی</button>
+        <button onclick="nextSlide()" data-i18n="btn.next">بعدی</button>
+    </div>
+
+    <script>
+        /* =========================================================
+           1) دیکشنری ترجمه‌ها
+           ========================================================= */
+        const translations = {
+            fa: {
+                pageTitle: "معماری میکروسرویس - فرشاد فاضلی",
+                btn: { prev: "قبلی", next: "بعدی" },
+                s1: {
+                    title: "چالش‌ها و راهکارهای معماری میکروسرویس",
+                    subtitle: "توضیح ساده و بررسی کلی مقاله",
+                    author: "ارائه‌دهنده: فرشاد فاضلی",
+                    footer: "معماری نرم‌افزار"
+                },
+                s2: {
+                    title: "نرم‌افزار چیست؟",
+                    lead: "نرم‌افزار مجموعه‌ای از برنامه‌ها و دستورهاست که برای انجام یک کار مشخص طراحی می‌شود.",
+                    c1t: "برنامه بانکی", c1d: "مدیریت حساب، انتقال پول و پرداخت.",
+                    c2t: "فروشگاه اینترنتی", c2d: "نمایش کالا، ثبت سفارش و پرداخت.",
+                    c3t: "سامانه دانشگاه", c3d: "انتخاب واحد، نمرات و اطلاعات دانشجو.",
+                    hl: "هرچه نرم‌افزار بزرگ‌تر شود، طراحی و مدیریت آن نیز اهمیت بیشتری پیدا می‌کند.",
+                    footer: "مفاهیم ابتدایی"
+                },
+                s3: {
+                    title: "معماری نرم‌افزار چیست؟",
+                    lead: "معماری نرم‌افزار مانند نقشه ساختمان است. این معماری مشخص می‌کند قسمت‌های مختلف نرم‌افزار چگونه ساخته و به هم متصل شوند.",
+                    l1: "هر بخش چه وظیفه‌ای دارد؟",
+                    l2: "اطلاعات چگونه بین بخش‌ها منتقل می‌شود؟",
+                    l3: "چگونه می‌توان نرم‌افزار را تغییر داد؟",
+                    l4: "چطور می‌توان نرم‌افزار را توسعه و نگهداری کرد؟",
+                    footer: "مفاهیم ابتدایی"
+                },
+                s4: {
+                    title: "یک مثال ساده: فروشگاه اینترنتی",
+                    lead: "یک فروشگاه اینترنتی فقط یک صفحه برای خرید نیست؛ بلکه از بخش‌های مختلفی تشکیل شده است.",
+                    c1t: "کاربران", c1d: "ثبت‌نام، ورود و اطلاعات مشتری.",
+                    c2t: "محصولات", c2d: "نمایش کالاها، قیمت و موجودی.",
+                    c3t: "سبد خرید", c3d: "نگهداری کالاهای انتخاب‌شده.",
+                    c4t: "پرداخت", c4d: "انجام تراکنش مالی.",
+                    c5t: "سفارش‌ها", c5d: "ثبت و پیگیری خرید.",
+                    c6t: "ارسال", c6d: "مدیریت ارسال کالا برای مشتری.",
+                    footer: "مثال کاربردی"
+                },
+                s5: {
+                    title: "معماری یکپارچه چیست؟",
+                    lead: "در معماری یکپارچه، همه بخش‌های نرم‌افزار داخل یک برنامه بزرگ قرار دارند.",
+                    big: "فروشگاه اینترنتی",
+                    b1: "کاربران", b2: "محصولات", b3: "پرداخت", b4: "سفارش‌ها",
+                    hl: "در این روش، بخش‌ها معمولاً به هم وابستگی زیادی دارند.",
+                    footer: "معماری سنتی"
+                },
+                s6: {
+                    title: "مشکلات معماری یکپارچه",
+                    c1t: "وابستگی زیاد", c1d: "تغییر یک قسمت ممکن است روی قسمت‌های دیگر اثر بگذارد.",
+                    c2t: "انتشار سخت", c2d: "برای تغییر کوچک، گاهی باید کل برنامه منتشر شود.",
+                    c3t: "خطایابی دشوار", c3d: "پیدا کردن مشکل در یک برنامه بزرگ زمان‌بر است.",
+                    c4t: "توسعه تیمی سخت‌تر", c4d: "چند تیم باید روی یک کد بزرگ کار کنند.",
+                    c5t: "مقیاس‌پذیری محدود", c5d: "گاهی باید کل برنامه را قوی‌تر کنیم.",
+                    c6t: "اثر خطا", c6d: "خرابی یک قسمت می‌تواند روی کل سیستم اثر بگذارد.",
+                    footer: "مشکلات معماری سنتی"
+                },
+                s7: {
+                    title: "میکروسرویس چیست؟",
+                    lead: "در معماری میکروسرویس، یک نرم‌افزار بزرگ به چند سرویس کوچک تقسیم می‌شود. هر سرویس وظیفه مشخصی دارد و می‌تواند مستقل توسعه پیدا کند.",
+                    big: "سیستم بزرگ",
+                    b1: "سرویس کاربران", b2: "سرویس محصولات", b3: "سرویس پرداخت", b4: "سرویس سفارش",
+                    footer: "معرفی میکروسرویس"
+                },
+                s8: {
+                    title: "ویژگی‌های هر میکروسرویس",
+                    c1t: "وظیفه مشخص", c1d: "هر سرویس یک کار اصلی انجام می‌دهد.",
+                    c2t: "استقلال", c2d: "سرویس‌ها تا حد زیادی جدا از هم کار می‌کنند.",
+                    c3t: "توسعه جداگانه", c3d: "تیم‌ها می‌توانند روی سرویس‌های مختلف کار کنند.",
+                    c4t: "انتشار جداگانه", c4d: "هر سرویس می‌تواند مستقل به‌روزرسانی شود.",
+                    c5t: "ارتباط شبکه‌ای", c5d: "سرویس‌ها از طریق شبکه با یکدیگر ارتباط دارند.",
+                    c6t: "چرخه عمر مستقل", c6d: "هر سرویس می‌تواند جداگانه تغییر کند.",
+                    footer: "ویژگی‌های اصلی"
+                },
+                s9: {
+                    title: "مثال میکروسرویس در فروشگاه",
+                    lead: "هر سرویس می‌تواند با فناوری و پایگاه داده مناسب خودش ساخته شود؛ البته این استقلال، مدیریت سیستم را پیچیده‌تر می‌کند.",
+                    footer: "مثال کاربردی"
+                },
+                s10: {
+                    title: "مقایسه معماری یکپارچه و میکروسرویس",
+                    th1: "موضوع", th2: "یکپارچه", th3: "میکروسرویس",
+                    r1c1: "ساختار", r1c2: "یک برنامه بزرگ", r1c3: "چند سرویس کوچک",
+                    r2c1: "توسعه", r2c2: "وابستگی بیشتر", r2c3: "استقلال بیشتر",
+                    r3c1: "انتشار", r3c2: "معمولاً کل برنامه", r3c3: "هر سرویس جداگانه",
+                    r4c1: "پیچیدگی اجرا", r4c2: "کمتر", r4c3: "بیشتر",
+                    footer: "مقایسه معماری‌ها"
+                },
+                s11: {
+                    title: "مزیت اول: توسعه مستقل",
+                    lead: "در معماری میکروسرویس، تیم‌های مختلف می‌توانند روی سرویس‌های مختلف کار کنند.",
+                    b1: "تیم کاربران", b2: "تیم محصولات", b3: "تیم پرداخت", b4: "تیم سفارش",
+                    l1: "تقسیم وظایف بین تیم‌ها آسان‌تر می‌شود.",
+                    l2: "تیم‌ها کمتر مزاحم کار یکدیگر می‌شوند.",
+                    l3: "توسعه بخش‌های مختلف می‌تواند هم‌زمان انجام شود.",
+                    footer: "مزایای میکروسرویس"
+                },
+                s12: {
+                    title: "مزیت دوم: تغییر و انتشار سریع‌تر",
+                    lead: "اگر فقط سرویس پرداخت تغییر کند، لازم نیست همه قسمت‌های فروشگاه دوباره تغییر یا منتشر شوند.",
+                    hl: "این ویژگی باعث می‌شود شرکت‌ها بتوانند سریع‌تر قابلیت‌های جدید را به کاربران ارائه کنند.",
+                    c1t: "تغییر محدود", c1d: "تغییرات معمولاً به همان سرویس محدود می‌شود.",
+                    c2t: "انتشار سریع", c2d: "هر سرویس می‌تواند جداگانه منتشر شود.",
+                    c3t: "کاهش ریسک", c3d: "احتمال خراب شدن بخش‌های غیرمرتبط کمتر است.",
+                    footer: "مزایای میکروسرویس"
+                },
+                s13: {
+                    title: "مزیت سوم: مقیاس‌پذیری",
+                    lead: "بعضی قسمت‌های نرم‌افزار بیشتر از قسمت‌های دیگر استفاده می‌شوند. در میکروسرویس می‌توان فقط همان قسمت را تقویت کرد.",
+                    b1: "کاربران کم", b2: "محصولات پرترافیک", b3: "پرداخت متوسط",
+                    hl: "مثلاً اگر بخش محصولات بازدید زیادی داشته باشد، فقط سرویس محصولات را می‌توان بزرگ‌تر و قوی‌تر کرد.",
+                    footer: "مقیاس‌پذیری"
+                },
+                s14: {
+                    title: "چرا میکروسرویس همیشه مناسب نیست؟",
+                    c1t: "پیچیدگی بیشتر", c1d: "تعداد سرویس‌ها، ارتباط‌ها و تنظیمات زیاد می‌شود.",
+                    c2t: "هزینه بیشتر", c2d: "سرور، ابزار و نیروی متخصص بیشتری لازم است.",
+                    c3t: "خطایابی سخت‌تر", c3d: "مشکل ممکن است در ارتباط بین چند سرویس باشد.",
+                    c4t: "مناسب نبودن برای پروژه کوچک", c4d: "برای برنامه ساده، معماری یکپارچه کافی است.",
+                    hl: "پس قبل از انتخاب میکروسرویس باید اندازه پروژه، تعداد اعضای تیم و نیازهای آینده بررسی شود.",
+                    footer: "محدودیت‌ها"
+                },
+                s15: {
+                    title: "معرفی مقاله",
+                    lead: "مقاله با عنوان «چالش‌ها و راهکارهای معماری میکروسرویس: یک مرور نظام‌مند ادبیات» به بررسی مشکلات و راهکارهای مربوط به معماری میکروسرویس می‌پردازد. [1]",
+                    hl: "این مقاله فقط یک سیستم خاص را بررسی نمی‌کند؛ بلکه پژوهش‌های مختلف درباره معماری میکروسرویس را جمع‌آوری و تحلیل می‌کند.",
+                    p: "هدف کلی مقاله این است که نشان دهد استفاده از میکروسرویس چه مزایایی دارد و در چه قسمت‌هایی ممکن است برای تیم‌ها و سازمان‌ها مشکل ایجاد کند.",
+                    footer: "معرفی مقاله"
+                },
+                s16: {
+                    title: "مرور نظام‌مند ادبیات یعنی چه؟",
+                    lead: "مرور نظام‌مند یعنی نویسندگان به جای بررسی یک مثال، پژوهش‌های قبلی را با روش مشخص جمع‌آوری و دسته‌بندی می‌کنند.",
+                    s1t: "جست‌وجو", s1d: "پیدا کردن پژوهش‌های مرتبط",
+                    s2t: "انتخاب", s2d: "انتخاب مطالعات مناسب",
+                    s3t: "بررسی", s3d: "استخراج اطلاعات مهم",
+                    s4t: "جمع‌بندی", s4d: "تحلیل و دسته‌بندی نتایج",
+                    p: "در مقاله، داده‌های مطالعات انتخاب‌شده بررسی و به شکل کیفی و کمی تحلیل شده‌اند. [1]",
+                    footer: "روش پژوهش مقاله"
+                },
+                s17: {
+                    title: "هدف اصلی مقاله",
+                    c1t: "سؤال اول", c1d: "مهم‌ترین چالش‌های معماری میکروسرویس چه هستند؟",
+                    c2t: "سؤال دوم", c2d: "برای حل این چالش‌ها چه راهکارهایی پیشنهاد شده است؟",
+                    c3t: "نتیجه مورد انتظار", c3d: "ارائه یک تصویر کلی برای کمک به انتخاب و استفاده بهتر از میکروسرویس.",
+                    footer: "هدف مقاله"
+                },
+                s18: {
+                    title: "مهم‌ترین چالش‌های مطرح‌شده",
+                    c1t: "ارتباط سرویس‌ها", c1d: "سرویس‌ها باید سریع و مطمئن با هم ارتباط داشته باشند.",
+                    c2t: "مدیریت داده", c2d: "داده‌های سرویس‌های مختلف باید هماهنگ باقی بمانند.",
+                    c3t: "امنیت", c3d: "تعداد نقاطی که باید محافظت شوند بیشتر می‌شود.",
+                    c4t: "نظارت", c4d: "وضعیت تعداد زیادی سرویس باید کنترل شود.",
+                    c5t: "خطایابی", c5d: "باید مشخص شود خطا در کدام سرویس اتفاق افتاده است.",
+                    c6t: "استقرار", c6d: "اجرا و به‌روزرسانی سرویس‌ها مدیریت بیشتری لازم دارد.",
+                    footer: "نتایج کلی مقاله"
+                },
+                s19: {
+                    title: "چالش ارتباط بین سرویس‌ها",
+                    b1: "سفارش", b2: "محصولات", b3: "پرداخت", b4: "ارسال",
+                    lead: "یک درخواست کاربر ممکن است از چند سرویس عبور کند. اگر یکی از سرویس‌ها کند یا قطع شود، کل فرایند ممکن است دچار مشکل شود.",
+                    l1: "استفاده از روش‌های ارتباطی استاندارد",
+                    l2: "ثبت درخواست‌ها و خطاها",
+                    l3: "کنترل زمان پاسخ سرویس‌ها",
+                    l4: "استفاده از صف پیام در بعضی فرایندها",
+                    footer: "چالش‌های مقاله"
+                },
+                s20: {
+                    title: "چالش مدیریت داده‌ها",
+                    lead: "در معماری میکروسرویس، هر سرویس ممکن است داده‌های مخصوص خود را داشته باشد.",
+                    b1t: "کاربران", b1d: "اطلاعات مشتری",
+                    b2t: "محصولات", b2d: "اطلاعات کالا",
+                    b3t: "سفارش‌ها", b3d: "اطلاعات خرید",
+                    b4t: "پرداخت", b4d: "تراکنش‌ها",
+                    hl: "این جداسازی استقلال ایجاد می‌کند؛ اما هماهنگ نگه داشتن اطلاعات بین سرویس‌ها می‌تواند دشوار باشد.",
+                    footer: "چالش‌های مقاله"
+                },
+                s21: {
+                    title: "چالش امنیت",
+                    lead: "در یک سیستم میکروسرویسی، فقط یک برنامه وجود ندارد؛ بلکه چندین سرویس و ارتباط مختلف باید محافظت شوند.",
+                    c1t: "احراز هویت", c1d: "مشخص شود کاربر چه کسی است.",
+                    c2t: "سطح دسترسی", c2d: "هر کاربر فقط به بخش‌های مجاز دسترسی داشته باشد.",
+                    c3t: "رمزنگاری", c3d: "اطلاعات هنگام انتقال محافظت شود.",
+                    c4t: "ثبت فعالیت‌ها", c4d: "درخواست‌ها و اتفاقات مهم ثبت شوند.",
+                    footer: "چالش‌های مقاله"
+                },
+                s22: {
+                    title: "چالش نظارت و خطایابی",
+                    lead: "وقتی یک درخواست از چند سرویس عبور می‌کند، پیدا کردن محل خطا دشوارتر می‌شود.",
+                    code: "اگر پاسخ دریافت نشود، باید مشخص شود مشکل در کدام مرحله بوده است.",
+                    l1: "ثبت گزارش‌های دقیق",
+                    l2: "استفاده از شناسه مشترک برای هر درخواست",
+                    l3: "بررسی وضعیت سرویس‌ها",
+                    l4: "ثبت زمان پاسخ و خطاها",
+                    footer: "چالش‌های مقاله"
+                },
+                s23: {
+                    title: "اندازه مناسب سرویس‌ها",
+                    lead: "سرویس‌ها نباید آن‌قدر بزرگ باشند که دوباره شبیه یک برنامه یکپارچه شوند، و نباید آن‌قدر کوچک باشند که تعداد ارتباط‌ها بیش از حد زیاد شود.",
+                    c1t: "سرویس خیلی بزرگ", c1d: "استقلال کم می‌شود و تغییر دادن آن سخت‌تر است.",
+                    c2t: "سرویس خیلی کوچک", c2d: "تعداد سرویس‌ها و ارتباط‌ها بیش از حد زیاد می‌شود.",
+                    c3t: "انتخاب مناسب", c3d: "هر سرویس باید یک مسئولیت مشخص و منطقی داشته باشد.",
+                    footer: "طراحی سرویس‌ها"
+                },
+                s24: {
+                    title: "راهکارهای کلی برای موفقیت",
+                    s1t: "طراحی درست", s1d: "مرز سرویس‌ها دقیق مشخص شود.",
+                    s2t: "ارتباط مناسب", s2d: "روش ارتباط سرویس‌ها استاندارد باشد.",
+                    s3t: "نظارت مداوم", s3d: "وضعیت سرویس‌ها همیشه بررسی شود.",
+                    s4t: "تیم آماده", s4d: "اعضای تیم ابزارها را بشناسند.",
+                    hl: "اجرای موفق میکروسرویس فقط به برنامه‌نویسی وابسته نیست؛ ابزار، تیم، امنیت، داده و روش استقرار نیز اهمیت دارند.",
+                    footer: "راهکارها"
+                },
+                s25: {
+                    title: "چه زمانی میکروسرویس مناسب است؟",
+                    l1: "سیستم بزرگ و پیچیده باشد.",
+                    l2: "چند تیم مختلف روی پروژه کار کنند.",
+                    l3: "بخش‌های مختلف سیستم مستقل از هم تغییر کنند.",
+                    l4: "تعداد کاربران زیاد باشد.",
+                    l5: "نیاز به مقیاس‌پذیری وجود داشته باشد.",
+                    l6: "سازمان ابزار و نیروی متخصص لازم را داشته باشد.",
+                    hl: "میکروسرویس بیشتر برای پروژه‌هایی مناسب است که واقعاً به استقلال و مقیاس‌پذیری سرویس‌ها نیاز دارند.",
+                    footer: "انتخاب معماری"
+                },
+                s26: {
+                    title: "چه زمانی بهتر است از آن استفاده نکنیم؟",
+                    c1t: "پروژه کوچک", c1d: "برای برنامه کوچک، پیچیدگی میکروسرویس ضروری نیست.",
+                    c2t: "تیم بسیار کوچک", c2d: "مدیریت تعداد زیادی سرویس برای تیم کوچک دشوار است.",
+                    c3t: "نیازمندی نامشخص", c3d: "ابتدا باید ساختار اصلی سیستم مشخص شود.",
+                    c4t: "کمبود ابزار", c4d: "بدون ابزار نظارت و استقرار، مدیریت سخت می‌شود.",
+                    footer: "انتخاب معماری"
+                },
+                s27: {
+                    title: "جمع‌بندی مقاله",
+                    lead: "مقاله نشان می‌دهد که معماری میکروسرویس می‌تواند انعطاف‌پذیری، استقلال و سرعت توسعه را افزایش دهد؛ اما در کنار آن، چالش‌های زیادی هم ایجاد می‌کند. [1]",
+                    hl: "مهم‌ترین پیام مقاله این است که استفاده از میکروسرویس باید با توجه به نیازهای پروژه، توانایی تیم و امکانات سازمان انجام شود.",
+                    footer: "جمع‌بندی مقاله"
+                },
+                s28: {
+                    title: "نتیجه‌گیری نهایی",
+                    c1t: "میکروسرویس چیست؟", c1d: "تقسیم یک سیستم بزرگ به سرویس‌های کوچک و مستقل.",
+                    c2t: "مزیت اصلی چیست؟", c2d: "توسعه، تغییر و مقیاس‌دهی مستقل سرویس‌ها.",
+                    c3t: "مشکل اصلی چیست؟", c3d: "مدیریت ارتباط، داده، امنیت و خطاها.",
+                    lead: "در نهایت، میکروسرویس یک ابزار جادویی نیست؛ بلکه یک انتخاب معماری است که باید با برنامه‌ریزی و شناخت کافی استفاده شود.",
+                    hl1: "ممنون از توجه شما",
+                    hl2: "ارائه‌دهنده: فرشاد فاضلی",
+                    footer: "پایان ارائه"
+                }
+            },
+
+            en: {
+                pageTitle: "Microservice Architecture - Farshad Fazeli",
+                btn: { prev: "Previous", next: "Next" },
+                s1: {
+                    title: "Challenges and Solutions of Microservice Architecture",
+                    subtitle: "A Simple Explanation and Overview of the Paper",
+                    author: "Presented by: Farshad Fazeli",
+                    footer: "Software Architecture"
+                },
+                s2: {
+                    title: "What is Software?",
+                    lead: "Software is a collection of programs and instructions designed to perform a specific task.",
+                    c1t: "Banking App", c1d: "Manage accounts, transfer money and payments.",
+                    c2t: "Online Store", c2d: "Display products, place orders and payments.",
+                    c3t: "University System", c3d: "Course selection, grades and student info.",
+                    hl: "The larger the software, the more important its design and management become.",
+                    footer: "Basic Concepts"
+                },
+                s3: {
+                    title: "What is Software Architecture?",
+                    lead: "Software architecture is like a building blueprint. It defines how the different parts of the software are built and connected.",
+                    l1: "What is the responsibility of each part?",
+                    l2: "How is information transferred between parts?",
+                    l3: "How can the software be changed?",
+                    l4: "How can the software be developed and maintained?",
+                    footer: "Basic Concepts"
+                },
+                s4: {
+                    title: "A Simple Example: Online Store",
+                    lead: "An online store is not just a shopping page; it consists of several different parts.",
+                    c1t: "Users", c1d: "Registration, login and customer info.",
+                    c2t: "Products", c2d: "Display items, price and stock.",
+                    c3t: "Shopping Cart", c3d: "Hold selected items.",
+                    c4t: "Payment", c4d: "Perform financial transactions.",
+                    c5t: "Orders", c5d: "Record and track purchases.",
+                    c6t: "Delivery", c6d: "Manage shipping to customers.",
+                    footer: "Practical Example"
+                },
+                s5: {
+                    title: "What is Monolithic Architecture?",
+                    lead: "In monolithic architecture, all parts of the software are inside one large application.",
+                    big: "Online Store",
+                    b1: "Users", b2: "Products", b3: "Payment", b4: "Orders",
+                    hl: "In this approach, parts usually have high dependency on each other.",
+                    footer: "Traditional Architecture"
+                },
+                s6: {
+                    title: "Problems of Monolithic Architecture",
+                    c1t: "High Coupling", c1d: "Changing one part may affect other parts.",
+                    c2t: "Hard Deployment", c2d: "For a small change, sometimes the whole app must be released.",
+                    c3t: "Difficult Debugging", c3d: "Finding problems in a large app takes time.",
+                    c4t: "Harder Team Development", c4d: "Multiple teams must work on one large codebase.",
+                    c5t: "Limited Scalability", c5d: "Sometimes the whole app must be scaled up.",
+                    c6t: "Error Impact", c6d: "A failure in one part can affect the whole system.",
+                    footer: "Traditional Architecture Problems"
+                },
+                s7: {
+                    title: "What is a Microservice?",
+                    lead: "In microservice architecture, a large application is split into several small services. Each service has a specific responsibility and can be developed independently.",
+                    big: "Large System",
+                    b1: "User Service", b2: "Product Service", b3: "Payment Service", b4: "Order Service",
+                    footer: "Introduction to Microservices"
+                },
+                s8: {
+                    title: "Features of Each Microservice",
+                    c1t: "Specific Responsibility", c1d: "Each service does one main job.",
+                    c2t: "Independence", c2d: "Services work largely separately.",
+                    c3t: "Independent Development", c3d: "Teams can work on different services.",
+                    c4t: "Independent Deployment", c4d: "Each service can be updated separately.",
+                    c5t: "Network Communication", c5d: "Services communicate over the network.",
+                    c6t: "Independent Lifecycle", c6d: "Each service can change separately.",
+                    footer: "Main Features"
+                },
+                s9: {
+                    title: "Microservice Example in an Online Store",
+                    lead: "Each service can be built with its own technology and database; however, this independence makes system management more complex.",
+                    footer: "Practical Example"
+                },
+                s10: {
+                    title: "Monolithic vs Microservice Architecture",
+                    th1: "Aspect", th2: "Monolithic", th3: "Microservice",
+                    r1c1: "Structure", r1c2: "One large application", r1c3: "Several small services",
+                    r2c1: "Development", r2c2: "More dependency", r2c3: "More independence",
+                    r3c1: "Deployment", r3c2: "Usually the whole app", r3c3: "Each service separately",
+                    r4c1: "Runtime Complexity", r4c2: "Lower", r4c3: "Higher",
+                    footer: "Architecture Comparison"
+                },
+                s11: {
+                    title: "Advantage 1: Independent Development",
+                    lead: "In microservice architecture, different teams can work on different services.",
+                    b1: "User Team", b2: "Product Team", b3: "Payment Team", b4: "Order Team",
+                    l1: "Task distribution among teams becomes easier.",
+                    l2: "Teams interfere less with each other.",
+                    l3: "Development of different parts can happen in parallel.",
+                    footer: "Microservice Advantages"
+                },
+                s12: {
+                    title: "Advantage 2: Faster Change and Deployment",
+                    lead: "If only the payment service changes, the rest of the store does not need to be changed or redeployed.",
+                    hl: "This allows companies to deliver new features to users faster.",
+                    c1t: "Limited Change", c1d: "Changes are usually confined to that service.",
+                    c2t: "Fast Deployment", c2d: "Each service can be deployed separately.",
+                    c3t: "Reduced Risk", c3d: "Less chance of breaking unrelated parts.",
+                    footer: "Microservice Advantages"
+                },
+                s13: {
+                    title: "Advantage 3: Scalability",
+                    lead: "Some parts of the software are used more than others. In microservices, only that part can be scaled.",
+                    b1: "Low Users", b2: "High-Traffic Products", b3: "Medium Payment",
+                    hl: "For example, if the product section gets heavy traffic, only the product service can be made larger and stronger.",
+                    footer: "Scalability"
+                },
+                s14: {
+                    title: "Why Microservices Are Not Always Suitable",
+                    c1t: "More Complexity", c1d: "The number of services, communications and configurations increases.",
+                    c2t: "Higher Cost", c2d: "More servers, tools and experts are needed.",
+                    c3t: "Harder Debugging", c3d: "The problem may be in communication between services.",
+                    c4t: "Not for Small Projects", c4d: "For simple apps, monolithic architecture is enough.",
+                    hl: "So before choosing microservices, project size, team size and future needs must be evaluated.",
+                    footer: "Limitations"
+                },
+                s15: {
+                    title: "Introduction to the Paper",
+                    lead: "The paper titled \"Challenges and Solutions of Microservice Architecture: A Systematic Literature Review\" examines problems and solutions related to microservice architecture. [1]",
+                    hl: "This paper does not examine just one specific system; it collects and analyzes various studies about microservice architecture.",
+                    p: "The overall goal of the paper is to show the benefits of microservices and the areas where they may create problems for teams and organizations.",
+                    footer: "Paper Introduction"
+                },
+                s16: {
+                    title: "What is a Systematic Literature Review?",
+                    lead: "A systematic review means that instead of examining one example, the authors collect and categorize previous studies using a defined method.",
+                    s1t: "Search", s1d: "Find related research",
+                    s2t: "Selection", s2d: "Choose suitable studies",
+                    s3t: "Review", s3d: "Extract important information",
+                    s4t: "Synthesis", s4d: "Analyze and categorize results",
+                    p: "In the paper, data from selected studies were reviewed and analyzed qualitatively and quantitatively. [1]",
+                    footer: "Paper Research Method"
+                },
+                s17: {
+                    title: "Main Goal of the Paper",
+                    c1t: "Question 1", c1d: "What are the most important challenges of microservice architecture?",
+                    c2t: "Question 2", c2d: "What solutions have been proposed to address these challenges?",
+                    c3t: "Expected Outcome", c3d: "Provide an overall picture to help choose and use microservices better.",
+                    footer: "Paper Goal"
+                },
+                s18: {
+                    title: "Most Important Challenges Identified",
+                    c1t: "Service Communication", c1d: "Services must communicate quickly and reliably.",
+                    c2t: "Data Management", c2d: "Data across different services must stay consistent.",
+                    c3t: "Security", c3d: "More points need to be protected.",
+                    c4t: "Monitoring", c4d: "The status of many services must be tracked.",
+                    c5t: "Debugging", c5d: "It must be determined which service caused the error.",
+                    c6t: "Deployment", c6d: "Running and updating services requires more management.",
+                    footer: "Overall Results of the Paper"
+                },
+                s19: {
+                    title: "Challenge: Communication Between Services",
+                    b1: "Order", b2: "Products", b3: "Payment", b4: "Delivery",
+                    lead: "A user request may pass through several services. If one service is slow or down, the entire process may be affected.",
+                    l1: "Use standard communication methods",
+                    l2: "Log requests and errors",
+                    l3: "Control service response time",
+                    l4: "Use message queues in some processes",
+                    footer: "Paper Challenges"
+                },
+                s20: {
+                    title: "Challenge: Data Management",
+                    lead: "In microservice architecture, each service may have its own data.",
+                    b1t: "Users", b1d: "Customer info",
+                    b2t: "Products", b2d: "Item info",
+                    b3t: "Orders", b3d: "Purchase info",
+                    b4t: "Payment", b4d: "Transactions",
+                    hl: "This separation creates independence, but keeping data consistent across services can be difficult.",
+                    footer: "Paper Challenges"
+                },
+                s21: {
+                    title: "Challenge: Security",
+                    lead: "In a microservice system, there is not just one application; multiple services and communications must be protected.",
+                    c1t: "Authentication", c1d: "Determine who the user is.",
+                    c2t: "Access Control", c2d: "Each user accesses only allowed parts.",
+                    c3t: "Encryption", c3d: "Protect data during transmission.",
+                    c4t: "Activity Logging", c4d: "Record important requests and events.",
+                    footer: "Paper Challenges"
+                },
+                s22: {
+                    title: "Challenge: Monitoring and Debugging",
+                    lead: "When a request passes through several services, finding the fault location becomes harder.",
+                    code: "If no response is received, it must be determined at which stage the problem occurred.",
+                    l1: "Record detailed logs",
+                    l2: "Use a shared request ID",
+                    l3: "Check service status",
+                    l4: "Record response times and errors",
+                    footer: "Paper Challenges"
+                },
+                s23: {
+                    title: "Proper Size of Services",
+                    lead: "Services should not be so large that they resemble a monolith, nor so small that the number of communications becomes excessive.",
+                    c1t: "Too Large Service", c1d: "Independence decreases and changing it becomes harder.",
+                    c2t: "Too Small Service", c2d: "The number of services and communications becomes excessive.",
+                    c3t: "Right Choice", c3d: "Each service should have a clear and logical responsibility.",
+                    footer: "Service Design"
+                },
+                s24: {
+                    title: "General Solutions for Success",
+                    s1t: "Proper Design", s1d: "Service boundaries must be clear.",
+                    s2t: "Proper Communication", s2d: "Service communication must be standard.",
+                    s3t: "Continuous Monitoring", s3d: "Service status must always be tracked.",
+                    s4t: "Prepared Team", s4d: "Team members must know the tools.",
+                    hl: "Successful microservices depend not only on programming; tools, team, security, data and deployment methods matter too.",
+                    footer: "Solutions"
+                },
+                s25: {
+                    title: "When Are Microservices Suitable?",
+                    l1: "The system is large and complex.",
+                    l2: "Multiple teams work on the project.",
+                    l3: "Different parts change independently.",
+                    l4: "The number of users is high.",
+                    l5: "There is a need for scalability.",
+                    l6: "The organization has the required tools and experts.",
+                    hl: "Microservices are more suitable for projects that truly need service independence and scalability.",
+                    footer: "Architecture Choice"
+                },
+                s26: {
+                    title: "When Is It Better Not to Use It?",
+                    c1t: "Small Project", c1d: "For a small app, microservice complexity is unnecessary.",
+                    c2t: "Very Small Team", c2d: "Managing many services is hard for a small team.",
+                    c3t: "Unclear Requirements", c3d: "The system's main structure must be defined first.",
+                    c4t: "Lack of Tools", c4d: "Without monitoring and deployment tools, management becomes hard.",
+                    footer: "Architecture Choice"
+                },
+                s27: {
+                    title: "Paper Conclusion",
+                    lead: "The paper shows that microservice architecture can increase flexibility, independence and development speed; but it also introduces many challenges. [1]",
+                    hl: "The most important message of the paper is that microservices should be used according to project needs, team capability and organizational resources.",
+                    footer: "Paper Conclusion"
+                },
+                s28: {
+                    title: "Final Conclusion",
+                    c1t: "What is a Microservice?", c1d: "Splitting a large system into small independent services.",
+                    c2t: "Main Advantage?", c2d: "Independent development, change and scaling of services.",
+                    c3t: "Main Challenge?", c3d: "Managing communication, data, security and errors.",
+                    lead: "In the end, microservices are not a magic tool; it is an architectural choice that must be used with planning and sufficient knowledge.",
+                    hl1: "Thank you for your attention",
+                    hl2: "Presented by: Farshad Fazeli",
+                    footer: "End of Presentation"
+                }
+            }
+        };
+
+        /* =========================================================
+           2) تابع اعمال ترجمه
+           ========================================================= */
+        function getByPath(obj, path) {
+            return path.split('.').reduce((o, k) => (o && o[k] != null) ? o[k] : null, obj);
+        }
+
+        function applyLanguage(lang) {
+            const dict = translations[lang];
+            if (!dict) return;
+
+            document.documentElement.lang = lang;
+            document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+
+            // عنوان صفحه
+            document.title = dict.pageTitle;
+
+            // همه عناصر دارای data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const value = getByPath(dict, key);
+                if (value != null) el.textContent = value;
+            });
+
+            // دکمه زبان
+            document.querySelectorAll('.lang-switch button').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+
+            // ذخیره انتخاب
+            try { localStorage.setItem('preferred-lang', lang); } catch (e) { }
+        }
+
+        /* =========================================================
+           3) اسلایدر (همان کد قبلی)
+           ========================================================= */
+        const slides = document.querySelectorAll(".slide");
+        const progress = document.getElementById("progress");
+        let current = 0;
+
+        function showSlide(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            slides.forEach(s => s.classList.remove("active"));
+            slides[index].classList.add("active");
+            current = index;
+            progress.style.width = ((current + 1) / slides.length) * 100 + "%";
+        }
+        function nextSlide() { showSlide(current + 1); }
+        function previousSlide() { showSlide(current - 1); }
+
+        document.addEventListener("keydown", e => {
+            if (["ArrowLeft", "ArrowDown", " "].includes(e.key)) nextSlide();
+            if (["ArrowRight", "ArrowUp"].includes(e.key)) previousSlide();
+            if (e.key === "Home") showSlide(0);
+            if (e.key === "End") showSlide(slides.length - 1);
+        });
+
+        /* =========================================================
+           4) راه‌اندازی اولیه
+           ========================================================= */
+        document.querySelectorAll('.lang-switch button').forEach(btn => {
+            btn.addEventListener('click', () => applyLanguage(btn.getAttribute('data-lang')));
+        });
+
+        // زبان ذخیره‌شده یا پیش‌فرض فارسی
+        let savedLang = 'fa';
+        try {
+            const s = localStorage.getItem('preferred-lang');
+            if (s === 'en' || s === 'fa') savedLang = s;
+        } catch (e) { }
+        applyLanguage(savedLang);
+
+        showSlide(0);
+    </script>
+
+</body>
+</html>
